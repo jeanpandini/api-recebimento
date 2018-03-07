@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,7 +65,10 @@ public class EstabelcimentoController {
 	public ResponseEntity<Estabelecimento> buscaPorNome(@RequestParam(name = "nome") String nome) {
 		Estabelecimento estbSearch = new Estabelecimento();
 		estbSearch.setNome(nome);
-		Example<Estabelecimento> exampleEstb = Example.of(estbSearch);
+		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("nome", match -> match.endsWith())
+				.withMatcher("nome", match -> match.startsWith());
+
+		Example<Estabelecimento> exampleEstb = Example.of(estbSearch, matcher);
 		if (!estbRepo.exists(exampleEstb)) {
 			return ResponseEntity.notFound().build();
 		}
